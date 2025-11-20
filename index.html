@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Financeiro | Clínica Viva</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const mockData = {
+        header: {
+          clinic: 'Clínica Viva',
+          location: 'São Paulo · Unidade Moema',
+          period: 'Fechamento · Março 2024',
+        },
+        stats: [
+          {
+            label: 'Despesa total',
+            value: 'R$ 1.240.000',
+            helper: '↑ 4,2% vs fev',
+            badge: 'Consolidado',
+            trend: 12,
+          },
+          {
+            label: 'Custo por paciente',
+            value: 'R$ 482',
+            helper: '↓ 1,1% vs fev',
+            badge: 'Eficiência',
+            trend: -6,
+          },
+          {
+            label: 'Prazo médio de pagamento',
+            value: '21 dias',
+            helper: '+2 dias vs fev',
+            badge: 'Fornecedores',
+            trend: 8,
+          },
+          {
+            label: 'Índice de glosa',
+            value: '1,8%',
+            helper: 'Meta < 2,5%',
+            badge: 'Faturamento',
+            trend: 14,
+          },
+        ],
+        highlights: [
+          {
+            title: 'Equipe médica',
+            value: 'R$ 610.000',
+            change: '+3,1%',
+            description: 'Plantões, produção variável e bônus clínico.',
+          },
+          {
+            title: 'Insumos e materiais',
+            value: 'R$ 210.000',
+            change: '-1,4%',
+            description: 'Farmácia, laboratório e materiais cirúrgicos.',
+          },
+          {
+            title: 'Infraestrutura',
+            value: 'R$ 175.000',
+            change: '+6,0%',
+            description: 'Aluguel, utilidades e manutenção de equipamentos.',
+          },
+        ],
+        timeline: [
+          {
+            title: 'Renegociação de contrato anestesia',
+            subtitle: 'Desconto de 7% a partir de abril',
+            tag: 'Financeiro',
+            date: '15/03',
+            impact: '+ R$ 18 mil / mês',
+          },
+          {
+            title: 'Rollout do prontuário digital',
+            subtitle: 'Módulo de prescrição eletrônica completo',
+            tag: 'Tecnologia',
+            date: '12/03',
+            impact: '\u25bc 4 min/consulta',
+          },
+          {
+            title: 'Nova escala de enfermagem',
+            subtitle: 'Cobertura lean nas noites e finais de semana',
+            tag: 'Operações',
+            date: '04/03',
+            impact: '- R$ 9 mil / mês',
+          },
+        ],
+        expenses: [
+          {
+            category: 'Honorários e equipe médica',
+            amount: 'R$ 610.000',
+            trend: '+3,1%',
+            note: 'Rotatividade menor e bônus por performance.',
+          },
+          {
+            category: 'Insumos e materiais',
+            amount: 'R$ 210.000',
+            trend: '-1,4%',
+            note: 'Acordo com principais fornecedores assinado.',
+          },
+          {
+            category: 'Infraestrutura e utilidades',
+            amount: 'R$ 175.000',
+            trend: '+6,0%',
+            note: 'Conta de energia impactada por calor atípico.',
+          },
+          {
+            category: 'Administrativo',
+            amount: 'R$ 120.000',
+            trend: '+0,9%',
+            note: 'Reposição de quadro em faturamento.',
+          },
+          {
+            category: 'Tecnologia e licenças',
+            amount: 'R$ 75.000',
+            trend: '+2,6%',
+            note: 'Novas licenças do prontuário digital.',
+          },
+        ],
+      };
+
+      const Badge = ({ text }) => <span className="badge">{text}</span>;
+
+      const TrendPill = ({ value }) => {
+        const positive = value >= 0;
+        return (
+          <span className={`pill ${positive ? 'pill-positive' : 'pill-negative'}`}>
+            {positive ? '▲' : '▼'} {Math.abs(value)}%
+          </span>
+        );
+      };
+
+      const StatCard = ({ label, value, helper, badge, trend }) => (
+        <div className="card stat-card">
+          <div className="stat-header">
+            <Badge text={badge} />
+            <TrendPill value={trend} />
+          </div>
+          <div className="stat-value">{value}</div>
+          <div className="stat-label">{label}</div>
+          <div className="stat-helper">{helper}</div>
+        </div>
+      );
+
+      const HighlightCard = ({ title, value, change, description }) => (
+        <div className="card highlight-card">
+          <div className="highlight-top">
+            <div>
+              <p className="label">{title}</p>
+              <h3>{value}</h3>
+            </div>
+            <span className={change.includes('-') ? 'pill pill-negative' : 'pill pill-positive'}>
+              {change}
+            </span>
+          </div>
+          <p className="muted">{description}</p>
+        </div>
+      );
+
+      const TimelineItem = ({ title, subtitle, tag, date, impact }) => (
+        <div className="timeline-item">
+          <div className="timeline-dot" />
+          <div className="timeline-content">
+            <div className="timeline-header">
+              <div>
+                <p className="label">{title}</p>
+                <p className="muted">{subtitle}</p>
+              </div>
+              <div className="timeline-meta">
+                <span className="chip">{tag}</span>
+                <span className="muted">{date}</span>
+              </div>
+            </div>
+            <span className="impact">{impact}</span>
+          </div>
+        </div>
+      );
+
+      const ExpenseRow = ({ category, amount, trend, note }) => (
+        <div className="expense-row">
+          <div>
+            <p className="label">{category}</p>
+            <p className="muted">{note}</p>
+          </div>
+          <div className="expense-meta">
+            <span className="amount">{amount}</span>
+            <span className={`pill ${trend.includes('-') ? 'pill-positive' : 'pill-negative'}`}>
+              {trend}
+            </span>
+          </div>
+        </div>
+      );
+
+      const Dashboard = () => (
+        <div className="page">
+          <header className="hero">
+            <div>
+              <p className="label">{mockData.header.period}</p>
+              <h1>{mockData.header.clinic}</h1>
+              <p className="muted">{mockData.header.location}</p>
+            </div>
+            <div className="cta-group">
+              <button className="ghost">Exportar PDF</button>
+              <button className="primary">Compartilhar com diretoria</button>
+            </div>
+          </header>
+
+          <section className="grid stats">
+            {mockData.stats.map((stat) => (
+              <StatCard key={stat.label} {...stat} />
+            ))}
+          </section>
+
+          <section className="grid highlights">
+            <div className="card gradient">
+              <div className="stat-header">
+                <Badge text="Radar" />
+                <span className="pill pill-positive">Saúde financeira</span>
+              </div>
+              <h2>Operação resiliente e previsível</h2>
+              <p className="muted">
+                Time enxuto, escalas bem definidas e contratos de fornecimento com reajuste
+                controlado garantem estabilidade para o próximo trimestre.
+              </p>
+              <div className="tags">
+                <span className="chip">Baixa glosa</span>
+                <span className="chip">Capex em dia</span>
+                <span className="chip">Liquidez saudável</span>
+              </div>
+            </div>
+            {mockData.highlights.map((highlight) => (
+              <HighlightCard key={highlight.title} {...highlight} />
+            ))}
+          </section>
+
+          <section className="panels">
+            <div className="card panel">
+              <div className="panel-header">
+                <div>
+                  <p className="label">Eventos do mês</p>
+                  <h3>Movimentações que impactaram o caixa</h3>
+                </div>
+                <button className="ghost">Ver cronograma</button>
+              </div>
+              <div className="timeline">
+                {mockData.timeline.map((item) => (
+                  <TimelineItem key={item.title} {...item} />
+                ))}
+              </div>
+            </div>
+
+            <div className="card panel">
+              <div className="panel-header">
+                <div>
+                  <p className="label">Categorias</p>
+                  <h3>Onde o dinheiro foi investido</h3>
+                </div>
+                <button className="ghost">Baixar detalhamento</button>
+              </div>
+              <div className="expenses">
+                {mockData.expenses.map((expense) => (
+                  <ExpenseRow key={expense.category} {...expense} />
+                ))}
+              </div>
+            </div>
+          </section>
+        </div>
+      );
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<Dashboard />);
+    </script>
+  </body>
+</html>
